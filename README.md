@@ -8,9 +8,29 @@ Arms in `++rs` and other `@r`-servicing cores will be provided with necessary tr
 
 As a first pass, we implement operators for `@rs`, `@rd`, `@rq`, and `@rh`.  After Lagoon is merged, we implement `@lvs`, `@lms`, `@lvd`, and `@lmd`.
 
-This requires us to finally resolves the treatment of complex numbers in Hoon.
+- [ ] `@rs`
+- [ ] `@rd`
+- [ ] `@rq`
+- [ ] `@rh`
+- [ ] `@rsc`
+- [ ] `@rdc`
+- [ ] `@rqc`
+- [ ] `@rhc`
+- [ ] `@lvs`
+- [ ] `@lvd`
+- [ ] `@lvq`
+- [ ] `@lvh`
+- [ ] `@lms`
+- [ ] `@lmd`
+- [ ] `@lmq`
+- [ ] `@lmh`
 
-(Checkmarks are a first pass in `@rs` single-precision floating-point implementation.)
+This requires us to finally resolves the treatment of complex numbers in Hoon (which I've here noted as `@rsc` etc.).
+
+- Possible four-letter alternative names:  sake, salt, saxe, soon, star
+- Possible two-letter core names:  sa, sl
+
+Checkmarks are a first pass in `@rs` single-precision floating-point implementation:
 
 ##  Constants
 
@@ -97,3 +117,4 @@ The library will pass through `++rs` behaviors for `++add` and so forth for ease
 ##  References
 
 - [David Goldberg, “What Every Computer Scientist Should Know About Floating-Point Arithmetic”](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
+- [Bartosz Ciechanowski, “Float Exposed” (webapp)](https://float.exposed/0x00000001)
