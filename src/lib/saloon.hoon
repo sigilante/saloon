@@ -22,28 +22,22 @@
   |_  $:  r=$?(%n %u %d %z)   :: round nearest, up, down, to zero
           rtol=_epsc          :: relative tolerance for precision of operations
       ==
-  ::  Passthrough for ++rs
   ++  sea  sea:^rs
   ++  bit  bit:^rs
-  ++  add  add:^rs
-  ++  sub  sub:^rs
-  ++  mul  mul:^rs
-  ++  div  div:^rs
-  ++  fma  fma:^rs
-  ++  sqt  sqt:^rs
+  ++  sun  sun:^rs
+  ++  san  san:^rs
+  ::++  exp  exp:^rs  :: no pass-through because of exp function
+  ++  toi  toi:^rs
+  ++  drg  drg:^rs
+  ++  grd  grd:^rs
+  ::
+  ::  Comparison
+  ::
   ++  lth  lth:^rs
   ++  lte  lte:^rs
   ++  equ  equ:^rs
   ++  gte  gte:^rs
   ++  gth  gth:^rs
-  ++  sun  sun:^rs
-  ++  san  san:^rs
-  ++  sig  |=(x=@rs =(0 (rsh [0 31] x)))
-  ++  sgn  sig
-  ::++  exp  exp:^rs  :: no pass-through because of exp function
-  ++  toi  toi:^rs
-  ++  drg  drg:^rs
-  ++  grd  grd:^rs
   ++  isclose
     |=  [p=@rs r=@rs]
     (lth (abs (sub p r)) rtol)
@@ -58,6 +52,17 @@
     ?.  (isclose p (snag i q))
       %.n
     $(i +(i))
+  ::
+  ::  Algebraic
+  ::
+  ++  add  add:^rs
+  ++  sub  sub:^rs
+  ++  mul  mul:^rs
+  ++  div  div:^rs
+  ++  fma  fma:^rs
+  ++  sig  |=(x=@rs =(0 (rsh [0 31] x)))
+  ++  sgn  sig
+  ++  neg  |=(x=@rs (sub .0 x))
   ++  factorial
     |=  x=@rs  ^-  @rs
     =/  t=@rs  .1
@@ -67,7 +72,7 @@
     $(x (sub x .1), t (mul t x))
   ++  abs
     |=  x=@rs  ^-  @rs
-    ?:((sgn x) x (sub .0 x))
+    ?:((sgn x) x (neg x))
   ++  exp
     |=  x=@rs  ^-  @rs
     =/  p   .1
@@ -86,6 +91,68 @@
     ?:  (lth n .2)
       p
     $(n (sub n .1), p (mul p x))
+  ::  natural logarithm, only converges for z < 2
+  ++  log-e-2
+    |=  z=@rs  ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .1
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      p
+    =/  ii  (add .1 i)
+    =/  term  (mul (pow-n .-1 (add .1 i)) (div (pow-n (sub z .1) i) i))
+    $(i (add i .1), p (add p term), po p)
+  ::  natural logarithm, z > 0
+  ++  log
+    |=  z=@rs  ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .0
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      (mul (div (mul .2 (sub z .1)) (add z .1)) p)
+    =/  term1  (div .1 (add .1 (mul .2 i)))
+    =/  term2  (mul (sub z .1) (sub z .1))
+    =/  term3  (mul (add z .1) (add z .1))
+    =/  term  (mul term1 (pow-n (div term2 term3) i))
+    $(i (add i .1), p (add p term), po p)
+  ::  logarithm base 2
+  =/  ln2  (log .2)
+  ++  log2
+    |=  z=@rs
+    (div (log z) ln2)
+  ::  logarithm base 10
+  =/  ln10  (log .10)
+  ++  log10
+    |=  z=@rs
+    (div (log z) ln10)
+  ::  general power, based on logarithms
+  ::  x^n = exp(n ln x)
+  ++  pow
+    |=  [x=@rs n=@rs]  ^-  @rs
+    (exp (mul n (log-e x)))
+  ::  square root
+  ++  sqt  sqrt
+  ++  sqrt
+    |=  x=@rs  ^-  @rs
+    ?>  (sgn x)
+    (pow x .0.5)
+  ::  cubic root
+  ++  cbrt
+    |=  x=@rs  ^-  @rs
+    ?>  (sgn x)
+    (pow x .0.33333333)
+  --  :: rs
+  ::  argument (real argument = absolute value)
+  ++  arg  abs
+  ::  binomial coefficient
+  ++  binomial
+    |=  [p=@ud q=@ud]
+    (div (factorial p) (mul (factorial q) (factorial (sub p q))))
+  ::
+  ::  Trigonometric functions
+  ::
   ::  sin x = x - x^3/3! + x^5/5! - x^7/7! + x^9/9! - ...
   ++  sin
     |=  x=@rs  ^-  @rs
@@ -115,36 +182,41 @@
     |=  x=@rs  ^-  @rs
     (div (sin x) (cos x))
     ::  TODO domain errors
-  ::  natural logarithm, only converges for z < 2
-  ++  log-e-2
-    |=  z=@rs  ^-  @rs
-    =/  p   .0
-    =/  po  .-1
-    =/  i   .1
-    |-  ^-  @rs
-    ?:  (lth (abs (sub po p)) rtol)
-      p
-    =/  ii  (add .1 i)
-    =/  term  (mul (pow-n .-1 (add .1 i)) (div (pow-n (sub z .1) i) i))
-    $(i (add i .1), p (add p term), po p)
-  ::  natural logarithm, z > 0
-  ++  log-e
-    |=  z=@rs  ^-  @rs
-    =/  p   .0
-    =/  po  .-1
-    =/  i   .0
-    |-  ^-  @rs
-    ?:  (lth (abs (sub po p)) rtol)
-      (mul (div (mul .2 (sub z .1)) (add z .1)) p)
-    =/  term1  (div .1 (add .1 (mul .2 i)))
-    =/  term2  (mul (sub z .1) (sub z .1))
-    =/  term3  (mul (add z .1) (add z .1))
-    =/  term  (mul term1 (pow-n (div term2 term3) i))
-    $(i (add i .1), p (add p term), po p)
-  ::  general power, based on logarithms
-  ::  x^n = exp(n ln x)
-  ++  pow
-    |=  [x=@rs n=@rs]  ^-  @rs
-    (exp (mul n (log-e x)))
-  --  :: rs
+  ::  reciprocal functions
+  ++  csc  |=(x=@rs (div .1 (sin x)))
+  ++  sec  |=(x=@rs (div .1 (cos x)))
+  ++  cot  |=(x=@rs (div .1 (tan x)))
+  ::  chord
+  ++  crd
+    |=  z=@rs
+    (mul .2 (sin (mul z .0.5)))
+  ::  versine
+  ++  siv
+    |=  z=@rs
+    (mul (sin z) (tan (mul z .0.5)))
+  ::
+  ::  Hyperbolic functions
+  ::
+  ::  hyperbolic sine
+  ++  sinh
+    |=  x=@rs
+    (mul .0.5 (sub (exp x) (exp (neg x))))
+  ::  hyperbolic cosine
+  ++  cosh
+    |=  x=@rs
+    (mul .0.5 (add (exp x) (exp (neg x))))
+  ::  hyperbolic tangent
+  ++  tanh
+    |=  x=@rs
+    (div (sinh x) (cosh x))
+  ::  reciprocal functions
+  ++  csch  |=(x=@rs (div .1 (sinh x)))
+  ++  sech  |=(x=@rs (div .1 (cosh x)))
+  ++  coth  |=(x=@rs (div .1 (tanh x)))
+  ::
+  ::  Analytical
+  ::
+  ::
+  ::  Operations
+  ::
 --

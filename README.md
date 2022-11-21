@@ -10,6 +10,8 @@ As a first pass, we implement operators for `@rs`, `@rd`, `@rq`, and `@rh`.  Aft
 
 This requires us to finally resolves the treatment of complex numbers in Hoon.
 
+(Checkmarks are a first pass in `@rs` single-precision floating-point implementation.)
+
 ##  Constants
 
 - [x] `pi`
@@ -18,54 +20,52 @@ This requires us to finally resolves the treatment of complex numbers in Hoon.
 - [x] `phi`
 - [x] `sqrt2`
 
+##  Comparison
+
+- [ ] `isclose`
+- [ ] `allclose` (over a `(list @r)`)
+
 ##  Algebraic
 
 - [x] `sgn` (also `++sig` for compatibility)
 - [x] `abs`
-- [ ] `sqrt`
-- [ ] `cbrt`
-- [ ] `arg`
+- [x] `sqrt`
+- [x] `cbrt`
+- [x] `arg`
 - [ ] `conj` (complex conjugate)
 - [x] `pow`
 - [x] `pown` (faster integer `pow`)
 - [x] `log`
-- [ ] `log10`
+- [x] `log10`
 - [x] `log2`
 - [x] `exp`
-- [ ] `expn` (faster integer `exp`)
-- [ ] `bernoulli` (Bernoulli number)
-- [ ] `binomial` (Binomial coefficient)
-- [ ] `euler` (Euler number)
+- [x] `binomial` (Binomial coefficient)
 
 ##  Trigonometric
 
 - [x] `sin`
 - [x] `cos`
 - [x] `tan`
-- [ ] `csc`
-- [ ] `sec`
-- [ ] `cot`
+- [x] `csc`
+- [x] `sec`
+- [x] `cot`
 - [ ] `arcsin`
 - [ ] `arccos`
 - [ ] `arctan`
 - [ ] `arccsc`
 - [ ] `arcsec`
 - [ ] `arccot`
-- [ ] `crd` (chord)
-- [ ] `versin`
-- [ ] `coversin`
-- [ ] `haversin`
-- [ ] `exsin`
-- [ ] `excsc`
+- [x] `crd` (chord)
+- [x] `siv` (versine)
 
 ##  Hyperbolic
 
-- [ ] `sinh`
-- [ ] `cosh`
-- [ ] `tanh`
-- [ ] `csch`
-- [ ] `sech`
-- [ ] `coth`
+- [x] `sinh`
+- [x] `cosh`
+- [x] `tanh`
+- [x] `csch`
+- [x] `sech`
+- [x] `coth`
 - [ ] `arcsinh`
 - [ ] `arccosh`
 - [ ] `arctanh`
@@ -92,10 +92,7 @@ This requires us to finally resolves the treatment of complex numbers in Hoon.
 - [ ] `sum`
 - [ ] `prod`
 
-- [ ] `isclose`
-- [ ] `allclose` (over a `(list @r)`)
-
-The library will pass through `++rs` behaviors for `++add` and so forth for ease of use.
+The library will pass through `++rs` behaviors for `++add` and so forth for ease of use.  Thus Saloon's `++rs` can act as a drop-in core for almost all Hoon `++rs` arms (except `++exp` and `++ma`).
 
 ##  References
 
