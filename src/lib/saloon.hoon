@@ -15,6 +15,8 @@
   =/  e      .2.7182818
   =/  phi    .0.57721566
   =/  sqrt2  .1.4142135
+  =/  ln2    .0.69314718
+  =/  ln10   .2.30258509
   ::  numerics constants to single precision
   =/  epsc  .1e-5             :: C standard minimum epsilon for binary32
   =/  epsd  `@rs`0b1          :: IEEE-754 dwarf (closest number to zero)
@@ -52,6 +54,10 @@
     ?.  (isclose p (snag i q))
       %.n
     $(i +(i))
+  ::  use equality rather than isclose here
+  ++  isint
+    |=  x=@rs  ^-  ?
+    (equ x (san (need (toi x))))
   ::
   ::  Algebraic
   ::
@@ -118,12 +124,10 @@
     =/  term  (mul term1 (pow-n (div term2 term3) i))
     $(i (add i .1), p (add p term), po p)
   ::  logarithm base 2
-  =/  ln2  (log .2)
   ++  log2
     |=  z=@rs
     (div (log z) ln2)
   ::  logarithm base 10
-  =/  ln10  (log .10)
   ++  log10
     |=  z=@rs
     (div (log z) ln10)
@@ -131,7 +135,7 @@
   ::  x^n = exp(n ln x)
   ++  pow
     |=  [x=@rs n=@rs]  ^-  @rs
-    (exp (mul n (log-e x)))
+    (exp (mul n (log x)))
   ::  square root
   ++  sqt  sqrt
   ++  sqrt
@@ -143,13 +147,13 @@
     |=  x=@rs  ^-  @rs
     ?>  (sgn x)
     (pow x .0.33333333)
-  --  :: rs
   ::  argument (real argument = absolute value)
   ++  arg  abs
   ::  binomial coefficient
   ++  binomial
-    |=  [p=@ud q=@ud]
-    (div (factorial p) (mul (factorial q) (factorial (sub p q))))
+    |=  [p=@ud q=@ud]  ^-  @ud
+    !!
+    ::(div (factorial p) (mul (factorial q) (factorial (sub p q))))
   ::
   ::  Trigonometric functions
   ::
@@ -188,26 +192,26 @@
   ++  cot  |=(x=@rs (div .1 (tan x)))
   ::  chord
   ++  crd
-    |=  z=@rs
+    |=  z=@rs  ^-  @rs
     (mul .2 (sin (mul z .0.5)))
   ::  versine
   ++  siv
-    |=  z=@rs
+    |=  z=@rs  ^-  @rs
     (mul (sin z) (tan (mul z .0.5)))
   ::
   ::  Hyperbolic functions
   ::
   ::  hyperbolic sine
   ++  sinh
-    |=  x=@rs
+    |=  x=@rs  ^-  @rs
     (mul .0.5 (sub (exp x) (exp (neg x))))
   ::  hyperbolic cosine
   ++  cosh
-    |=  x=@rs
+    |=  x=@rs  ^-  @rs
     (mul .0.5 (add (exp x) (exp (neg x))))
   ::  hyperbolic tangent
   ++  tanh
-    |=  x=@rs
+    |=  x=@rs  ^-  @rs
     (div (sinh x) (cosh x))
   ::  reciprocal functions
   ++  csch  |=(x=@rs (div .1 (sinh x)))
@@ -216,7 +220,38 @@
   ::
   ::  Analytical
   ::
+  ::  Lanczos approximation for the Gamma function
+  ++  gamma
+    |=  z=@rs  ^-  @rs
+    ?:  (isint z)  (factorial (dec z))
+    =/  p=(list @rs)  :~  .676.5203681218851
+                          .-1259.1392167224028
+                          .771.32342877765313
+                          .-176.61502916214059
+                          .12.507343278686905
+                          .-0.13857109526572012
+                          .9.9843695780195716e-6
+                          .1.5056327351493116e-7
+           ==
+    ::  reflect for z < 0.5
+    ?:  (lth z .0.5)
+      (div pi (mul (sin (mul pi z)) $(z (sub .1 z))))
+    =/  z  (sub z .1)
+    =/  x  (sub .1 epsc)
+    =/  i  0
+    =/  x  |-  ^-  @rs
+      ?:  =((lent p) i)  x
+      ~&  >>  [i x (snag i p) :(add z (sun i) .1) (div (snag i p) :(add z (sun i) .1))]
+      %=  $
+        i  +(i)
+        x  (add x (div (snag i p) :(add z (sun i) .1)))
+      ==
+    =/  t  :(add z (sun (lent p)) .-0.5)
+    ~&  >  [i z x t]
+    ~&  >>>  [(sqrt tau) (pow t (add z .0.5)) (exp (neg t))]
+    :(mul (sqrt tau) (pow t (add z .0.5)) (exp (neg t)) x)
   ::
   ::  Operations
   ::
+  --  :: rs
 --

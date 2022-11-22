@@ -44,6 +44,8 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 
 - [ ] `isclose`
 - [ ] `allclose` (over a `(list @r)`)
+- [ ] `isint`
+- [ ] `isreal`
 
 ##  Algebraic
 
