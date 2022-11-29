@@ -45,7 +45,6 @@
     (lth (abs (sub p r)) rtol)
   ++  allclose
     |=  [p=@rs q=(list @rs)]
-    =/  f=?  |
     =/  i  0
     =/  n  (lent q)
     |-  ^-  ?
@@ -221,6 +220,7 @@
   ::  Analytical
   ::
   ::  Lanczos approximation for the Gamma function
+  ::  https://en.wikipedia.org/wiki/Lanczos_approximation
   ++  gamma
     |=  z=@rs  ^-  @rs
     ?:  (isint z)  (factorial (dec z))
@@ -253,5 +253,84 @@
   ::
   ::  Operations
   ::
+  ::  https://www.eetimes.com/an-introduction-to-different-rounding-algorithms/
+  ++  floor
+    |=  x=@rs  ^-  @rs
+    (need (~(toi rs %d) x))
+  ++  ceil
+    |=  x=@rs  ^-  @rs
+    (need (~(toi rs %u) x))
+  ::  regular round-half-up
+  ++  round
+    |=  [x=@rs]  ^-  @rs
+    (ceil (mul (floor (mul .2 x)) .0.5))
+  ++  round-decimal
+    |=  [x=@rs y=@sd]
+    (div (round (mul x (pow .10 (san y)))) (pow .10 (san y)))
+  ++  linspace
+    |=  [lims=[@rs @rs] n=@ud]  ^-  @rs
+    =/  i  0
+    =|  s=(list @rs)
+    =/  f  -:lims
+    =/  dx  (div (sub +:lims -:lims) (sun n))
+    %-  flop
+    |-  ^+  s
+    ?:  =(i n)  s
+    %=  $
+      i  +(i)
+      f  (add f dx)
+      s  [f s]
+    ==
+  ++  iota
+    |=  l=@rs r=@rs
+    ?.  &((isint l) (isint r))  !!
+    (linspace [l r] (round (sub r l)))
+  ::  Placeholder, probably as a door so can default to gate
+  ++  diff  !!
+  ::  Finite difference, central difference formula
+  ++  difffinite
+    |=  [f=gate x=@rs dx=@rs]
+    =/  fm1  (f (sub x dx))
+    =/  f2   (sub .0 (mul .2 (f x)))
+    =/  fp1  (f (add x dx))
+    (div :(add fm1 f2 fp1) (mul dx dx))
+  ++  diffpade
+  ::  Placeholder, probably as a door so can default to gate
+  ++  integrate  !!
+  ::  Trapezoid rule integration
+  ++  inttrapez
+    |=  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
+    =/  i   1
+    =/  xs  (linspace lims n)
+    =/  s   (mul .0.5 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
+    %-  (cury mul dx)
+    |-  ^-  @rs
+    ?:  =(n +(i))  s
+    $(i +(i), s (add (f (snag i xs)) s))
+  ::  Trapezoid rule integration
+  ++  intsimpson
+    |=  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
+    =/  i   1
+    =/  xs  (linspace lims n)
+    =/  s   (mul .0.33333333 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
+    %-  (cury mul dx)
+    |-  ^-  @rs
+    ?:  =(n +(i))  s
+    ?:  =(1 (mod n .2))
+      $(i +(i), s (add (mul .4 (f (snag i xs)) s)))
+    $(i +(i), s (add (mul .2 (f (snag i xs)) s)))
+  ::  Newton's method for finding zero
+  ++  newton
+    |=  [f=gate x0=@rs]
+    =/  i  1
+    =|  x=@rs
+    =/  dx=.1
+    |-  ^-  @rs
+    ?:  (isclose .0 (f x))  x
+    %=  $
+      dx  (abs (sub x x0))
+      x   (sub x0 (div x (difffinite f x dx)))
+      x0  x
+    ==
   --  :: rs
 --

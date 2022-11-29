@@ -36,16 +36,17 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 
 - [x] `pi`
 - [x] `e`
-- [ ] `i`
+- [ ] `i` (complex only)
 - [x] `phi`
 - [x] `sqrt2`
 
 ##  Comparison
 
-- [ ] `isclose`
-- [ ] `allclose` (over a `(list @r)`)
-- [ ] `isint`
-- [ ] `isreal`
+- [x] `isclose`
+- [x] `allclose` (over a `(list @r)`)
+- [x] `isint`
+- [ ] `isreal` (complex only)
+- [ ] `isimag` (complex only)
 
 ##  Algebraic
 
@@ -54,7 +55,7 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 - [x] `sqrt`
 - [x] `cbrt`
 - [x] `arg`
-- [ ] `conj` (complex conjugate)
+- [ ] `conj` (complex conjugate) (complex only)
 - [x] `pow`
 - [x] `pown` (faster integer `pow`)
 - [x] `log`
@@ -109,14 +110,23 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 
 ##  Operations
 
-- [ ] `int`
-- [ ] `diff`
-- [ ] `sum`
-- [ ] `prod`
+- [x] `round` (regular banker's roundaing)
+  - [x] `round-decimal` (rounding to specific accuracy, e.g. `.100.01`)
+- [x] `linspace` (`++gulf` which evenly spans a range in floating-point)
+- [x] `iota` (APL-style `++gulf` in floating-point)
+- [x] `diff` (placeholder for adaptive algorithm in future)
+  - [x] `difffinite` (finite difference)
+  - [ ] `diffpade` (Padé approximation)
+- [x] `integrate` (placeholder for adaptive algorithm as door in future)
+  - [x] `inttrapez` (trapezoid rule)
+  - [x] `intsimpson` (Simpson's rule)
+- [x] `newton` (locate a function zero using Newton's method)
 
 The library will pass through `++rs` behaviors for `++add` and so forth for ease of use.  Thus Saloon's `++rs` can act as a drop-in core for almost all Hoon `++rs` arms (except `++exp` and `++ma`).
 
 ##  References
 
-- [David Goldberg, “What Every Computer Scientist Should Know About Floating-Point Arithmetic”](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
+- Forman Acton, _Numerical Methods that (Usually) Work_, 1ed.  1997.
 - [Bartosz Ciechanowski, “Float Exposed” (webapp)](https://float.exposed/0x00000001)
+- [David Goldberg, “What Every Computer Scientist Should Know About Floating-Point Arithmetic”](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
+- Parviz Moin, _Fundamentals of Engineering Numerical Analysis_. 2ed.  2001.
