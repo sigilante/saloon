@@ -232,7 +232,7 @@
     (arccos (div .1 x))
   ++  arccot 
     |=  x=@rs  ^-  @rs
-    (arccos (div .1 x))
+    (arctan (div .1 x))
   ::  chord
   ++  crd
     |=  z=@rs  ^-  @rs
