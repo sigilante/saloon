@@ -71,6 +71,8 @@
   ++  factorial
     |=  x=@rs  ^-  @rs
     =/  t=@rs  .1
+    ?:  (isclose x .0)
+      t
     |-  ^-  @rs
     ?:  (isclose x .1)
       t
@@ -190,12 +192,47 @@
   ++  sec  |=(x=@rs (div .1 (cos x)))
   ++  cot  |=(x=@rs (div .1 (tan x)))
   ::  https://dsp.stackexchange.com/questions/25770/looking-for-an-arcsin-algorithm
-  ++  arcsin  !!
-  ++  arccos  !!
-  ++  arctan  !!
-  ++  arccsc  !!
-  ++  arcsec  !!
-  ++  arccot  !!
+  ::  arcsin x = x + (1/2)*(x^3/3) + (3/8)(x^5/5) + (15/48)(x^7/7) + ...
+  ++  arcsin
+    |=  x=@rs  ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .0
+    ?:  (gte (abs x) .1)
+      !!
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      p
+    =/  ii  (mul .2 i)
+    =/  ti  (mul (pow-n .2 i) (factorial i))
+    =/  oi  (add (mul .2 i) .1)
+    =/  term  (mul (div (factorial ii) (mul ti ti)) (div (pow-n x oi) oi))
+    $(i (add i .1), p (add p term), po p)
+  ++  arccos
+    |=  x=@rs  ^-  @rs
+    (sub (div pi .2) (arcsin x))
+  ++  arctan  
+    |=  x=@rs  ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .0
+    ?:  (gte (abs x) .1)
+      !!
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      p
+    =/  ii  (add (mul .2 i) .1)
+    =/  term  (div (mul (pow-n .-1 i) (pow-n x ii)) ii)
+    $(i (add i .1), p (add p term), po p)
+  ++  arccsc 
+    |=  x=@rs  ^-  @rs
+    (arcsin (div .1 x))
+  ++  arcsec 
+    |=  x=@rs  ^-  @rs
+    (arccos (div .1 x))
+  ++  arccot 
+    |=  x=@rs  ^-  @rs
+    (arctan (div .1 x))
   ::  chord
   ++  crd
     |=  z=@rs  ^-  @rs
@@ -270,7 +307,7 @@
   ++  iota
     |=  [l=@rs r=@rs]
     ?.  &((isint l) (isint r))  !!
-    (linspace [l r] (round (sub r l)))
+    (linspace [l r] `@ud`(round (sub r l)))
   ::  Placeholder, probably as a door so can default to gate
   ++  diff  !!
   ::  Finite difference, central difference formula
@@ -294,17 +331,17 @@
     ?:  =(n +(i))  s
     $(i +(i), s (add (f (snag i xs)) s))
   ::  Trapezoid rule integration
-  ++  intsimpson
-    |*  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
-    =/  i   1
-    =/  xs  (linspace lims n)
-    =/  s   (mul .0.33333333 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
-    %-  (cury mul dx)
-    |-  ^-  @rs
-    ?:  =(n +(i))  s
-    ?:  =(1 (mod n .2))
-      $(i +(i), s (add (mul .4 (f (snag i xs)) s)))
-    $(i +(i), s (add (mul .2 (f (snag i xs)) s)))
+  ::++  intsimpson
+    ::|*  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
+    ::=/  i   1
+    ::=/  xs  (linspace lims n)
+    ::=/  s   (mul .0.33333333 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
+    ::%-  (cury mul dx)
+    ::|-  ^-  @rs
+    ::?:  =(n +(i))  s
+    ::?:  =(1 (mod n .2))
+      ::$(i +(i), s (add (mul .4 (f (snag i xs)) s)))
+    ::$(i +(i), s (add (mul .2 (f (snag i xs)) s)))
   ::  Newton's method for finding zero
   ++  newton
     |*  [f=gate x0=@rs]
