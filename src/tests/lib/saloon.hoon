@@ -13,6 +13,9 @@
   :~  [%palm [": " ~ ~ ~] [leaf+"expected" "{<expected>}"]]
       [%palm [": " ~ ~ ~] [leaf+"actual" "{<actual>}"]]
   ==
+::  Comparison
+++  test-isclose  !!
+++  test-allclose  !!
 :: https://en.wikipedia.org/wiki/Particular_values_of_the_gamma_function
 ++  test-gamma  ^-  tang
   ;:  weld

@@ -189,6 +189,13 @@
   ++  csc  |=(x=@rs (div .1 (sin x)))
   ++  sec  |=(x=@rs (div .1 (cos x)))
   ++  cot  |=(x=@rs (div .1 (tan x)))
+  ::  https://dsp.stackexchange.com/questions/25770/looking-for-an-arcsin-algorithm
+  ++  arcsin  !!
+  ++  arccos  !!
+  ++  arctan  !!
+  ++  arccsc  !!
+  ++  arcsec  !!
+  ++  arccot  !!
   ::  chord
   ++  crd
     |=  z=@rs  ^-  @rs
@@ -222,44 +229,23 @@
   ::  Lanczos approximation for the Gamma function
   ::  https://en.wikipedia.org/wiki/Lanczos_approximation
   ++  gamma
-    |=  z=@rs  ^-  @rs
-    ?:  (isint z)  (factorial (dec z))
-    =/  p=(list @rs)  :~  .676.5203681218851
-                          .-1259.1392167224028
-                          .771.32342877765313
-                          .-176.61502916214059
-                          .12.507343278686905
-                          .-0.13857109526572012
-                          .9.9843695780195716e-6
-                          .1.5056327351493116e-7
-           ==
-    ::  reflect for z < 0.5
-    ?:  (lth z .0.5)
-      (div pi (mul (sin (mul pi z)) $(z (sub .1 z))))
-    =/  z  (sub z .1)
-    =/  x  (sub .1 epsc)
-    =/  i  0
-    =/  x  |-  ^-  @rs
-      ?:  =((lent p) i)  x
-      ~&  >>  [i x (snag i p) :(add z (sun i) .1) (div (snag i p) :(add z (sun i) .1))]
-      %=  $
-        i  +(i)
-        x  (add x (div (snag i p) :(add z (sun i) .1)))
-      ==
-    =/  t  :(add z (sun (lent p)) .-0.5)
-    ~&  >  [i z x t]
-    ~&  >>>  [(sqrt tau) (pow t (add z .0.5)) (exp (neg t))]
-    :(mul (sqrt tau) (pow t (add z .0.5)) (exp (neg t)) x)
+    !!
   ::
   ::  Operations
   ::
   ::  https://www.eetimes.com/an-introduction-to-different-rounding-algorithms/
   ++  floor
     |=  x=@rs  ^-  @rs
-    (need (~(toi rs %d) x))
+    ~&  >>  rs
+    ~&  >>>  ^rs
+    !!
+    ::(need (~(toi rs %d) x))
   ++  ceil
     |=  x=@rs  ^-  @rs
-    (need (~(toi rs %u) x))
+    ~&  >>  rs
+    ~&  >>>  ^rs
+    !!
+    ::(need (~(toi rs [%u rtol]) x))
   ::  regular round-half-up
   ++  round
     |=  [x=@rs]  ^-  @rs
@@ -268,7 +254,7 @@
     |=  [x=@rs y=@sd]
     (div (round (mul x (pow .10 (san y)))) (pow .10 (san y)))
   ++  linspace
-    |=  [lims=[@rs @rs] n=@ud]  ^-  @rs
+    |=  [lims=[@rs @rs] n=@ud]  ^-  (list @rs)
     =/  i  0
     =|  s=(list @rs)
     =/  f  -:lims
@@ -282,24 +268,24 @@
       s  [f s]
     ==
   ++  iota
-    |=  l=@rs r=@rs
+    |=  [l=@rs r=@rs]
     ?.  &((isint l) (isint r))  !!
     (linspace [l r] (round (sub r l)))
   ::  Placeholder, probably as a door so can default to gate
   ++  diff  !!
   ::  Finite difference, central difference formula
   ++  difffinite
-    |=  [f=gate x=@rs dx=@rs]
+    |*  [f=gate x=@rs dx=@rs]
     =/  fm1  (f (sub x dx))
     =/  f2   (sub .0 (mul .2 (f x)))
     =/  fp1  (f (add x dx))
     (div :(add fm1 f2 fp1) (mul dx dx))
-  ++  diffpade
+  ++  diffpade  !!
   ::  Placeholder, probably as a door so can default to gate
   ++  integrate  !!
   ::  Trapezoid rule integration
   ++  inttrapez
-    |=  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
+    |*  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
     =/  i   1
     =/  xs  (linspace lims n)
     =/  s   (mul .0.5 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
@@ -309,7 +295,7 @@
     $(i +(i), s (add (f (snag i xs)) s))
   ::  Trapezoid rule integration
   ++  intsimpson
-    |=  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
+    |*  [f=gate lims=[@rs @rs] dx=@rs n=@ud]
     =/  i   1
     =/  xs  (linspace lims n)
     =/  s   (mul .0.33333333 (add (f (snag 0 xs)) (f (snag (dec n) xs))))
@@ -321,10 +307,10 @@
     $(i +(i), s (add (mul .2 (f (snag i xs)) s)))
   ::  Newton's method for finding zero
   ++  newton
-    |=  [f=gate x0=@rs]
+    |*  [f=gate x0=@rs]
     =/  i  1
     =|  x=@rs
-    =/  dx=.1
+    =/  dx  .1
     |-  ^-  @rs
     ?:  (isclose .0 (f x))  x
     %=  $

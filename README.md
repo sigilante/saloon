@@ -126,6 +126,7 @@ The library will pass through `++rs` behaviors for `++add` and so forth for ease
 
 ##  References
 
+- Milton Abramowitz & Irene Stegun, _Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables_.  1964–2010.
 - Forman Acton, _Numerical Methods that (Usually) Work_, 1ed.  1997.
 - [Bartosz Ciechanowski, “Float Exposed” (webapp)](https://float.exposed/0x00000001)
 - [David Goldberg, “What Every Computer Scientist Should Know About Floating-Point Arithmetic”](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
