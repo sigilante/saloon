@@ -72,12 +72,12 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 - [x] `csc`
 - [x] `sec`
 - [x] `cot`
-- [ ] `arcsin`
-- [ ] `arccos`
-- [ ] `arctan`
-- [ ] `arccsc`
-- [ ] `arcsec`
-- [ ] `arccot`
+- [x] `arcsin`
+- [x] `arccos`
+- [x] `arctan`
+- [x] `arccsc`
+- [x] `arcsec`
+- [x] `arccot`
 - [x] `crd` (chord)
 - [x] `siv` (versine)
 
