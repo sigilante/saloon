@@ -260,6 +260,40 @@
   ++  csch  |=(x=@rs (div .1 (sinh x)))
   ++  sech  |=(x=@rs (div .1 (cosh x)))
   ++  coth  |=(x=@rs (div .1 (tanh x)))
+  ::  hyperbolic arcsin
+  ++  arcsinh  
+    |=  x=@rs  ^-  @rs
+    (log (add x (sqrt (add (mul x x) .1))))
+  ::  hyperbolic arccos
+  ++  arccosh  
+    |=  x=@rs  ^-  @rs
+    ?:  (lth x .1)
+      !!
+    (log (add x (sqrt (sub (mul x x) .1))))
+  ::  hyperbolic arctan
+  ++  arctanh  
+    |=  x=@rs  ^-  @rs
+    ?:  (gte (abs x) .1)
+      !!
+    (mul .0.5 (log (div (add .1 x) (sub .1 x))))
+  ::  reciprocal functions
+  ++  arccsch
+    |=  x=@rs  ^-  @rs
+    ?:  (isclose x .0)
+      !!
+    (log (add (div .1 x) (sqrt (add (div .1 (pow-n x .2)) .1))))
+  ++  arcsech 
+    |=  x=@rs  ^-  @rs
+    ?:  (gth x .1)
+      !!
+    ?:  (lte x .0)
+      !!
+    (log (div (add .1 (sqrt (sub .1 (pow-n x .2)))) x))
+  ++  arccoth  
+    |=  x=@rs  ^-  @rs
+    ?:  (lte (abs x) .1)
+      !!
+    (mul .0.5 (log (div (add x .1) (sub x .1))))
   ::
   ::  Analytical
   ::
@@ -267,6 +301,19 @@
   ::  https://en.wikipedia.org/wiki/Lanczos_approximation
   ++  gamma
     !!
+  ::  Implementation of the Hurwitz Zeta function
+  ++  zeta
+    |=  [x=@rs q=@rs]  
+    ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .0
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      p
+    =/  kq  (add i q)
+    =/  term  (div .1 (pow kq x))
+    $(i (add i .1), p (add p term), po p)
   ::
   ::  Operations
   ::

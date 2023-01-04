@@ -89,12 +89,12 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 - [x] `csch`
 - [x] `sech`
 - [x] `coth`
-- [ ] `arcsinh`
-- [ ] `arccosh`
-- [ ] `arctanh`
-- [ ] `arccsch`
-- [ ] `arcsech`
-- [ ] `arccoth`
+- [x] `arcsinh`
+- [x] `arccosh`
+- [x] `arctanh`
+- [x] `arccsch`
+- [x] `arcsech`
+- [x] `arccoth`
 
 ##  Analytical
 
@@ -106,7 +106,7 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 - [ ] `bi`
 - [ ] `gamma`
 - [ ] `elliptic`
-- [ ] `zeta`
+- [x] `zeta`
 
 ##  Operations
 
