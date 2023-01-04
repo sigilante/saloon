@@ -106,7 +106,7 @@ Checkmarks are a first pass in `@rs` single-precision floating-point implementat
 - [ ] `bi`
 - [ ] `gamma`
 - [ ] `elliptic`
-- [ ] `zeta`
+- [x] `zeta`
 
 ##  Operations
 

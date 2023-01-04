@@ -301,6 +301,19 @@
   ::  https://en.wikipedia.org/wiki/Lanczos_approximation
   ++  gamma
     !!
+  ::  Implementation of the Hurwitz Zeta function
+  ++  zeta
+    |=  [x=@rs q=@rs]  
+    ^-  @rs
+    =/  p   .0
+    =/  po  .-1
+    =/  i   .0
+    |-  ^-  @rs
+    ?:  (lth (abs (sub po p)) rtol)
+      p
+    =/  kq  (add i q)
+    =/  term  (div .1 (pow kq x))
+    $(i (add i .1), p (add p term), po p)
   ::
   ::  Operations
   ::
