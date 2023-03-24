@@ -1,5 +1,7 @@
 #   Scientific ALgorithms in hOON
 
+**wip as of ~2023.3.24**
+
 Transcendental and algebraic functions in native Hoon (and later jets).
 
 It's time to supersede [`lazytrig`](https://github.com/sigilante/lazytrig).
